@@ -34,6 +34,10 @@ vim.opt.tabstop = 2
 -- --------
 vim.g.mapleader = ","
 
+-- Copy to system clipboard
+vim.keymap.set("n", "<leader>y", "\"*y")
+vim.keymap.set("v", "<leader>y", "\"*y")
+
 -- Pane navigation
 vim.keymap.set("n", "<C-h>", "<C-W><C-h>")
 vim.keymap.set("n", "<C-j>", "<C-W><C-j>")
@@ -85,3 +89,75 @@ require("catppuccin").setup({
   },
 })
 vim.cmd.colorscheme("catppuccin")
+
+
+-- -------
+-- Plugins
+-- -------
+
+-- LSP
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+local on_attach = function(client, bufnr)
+  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+  local bufopts = { noremap=true, silent=true, buffer=bufnr }
+  vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
+  vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, bufopts)
+  vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
+  vim.keymap.set("n", "gT", vim.lsp.buf.type_definition, bufopts)
+  vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, bufopts)
+  vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, bufopts)
+  vim.keymap.set("i", "<C-s>", vim.lsp.buf.signature_help, bufopts)
+
+  vim.cmd.autocmd("BufWritePro <buffer> lua vim.lsp.buf.format()")
+end
+
+require"lspconfig".gopls.setup{
+  capabilities = capabilities,
+  on_attach = on_attach,
+  settings = {
+    gopls = {
+      gofumpt = true,
+      completeUnimported = true,
+    }
+  }
+}
+
+require"lspconfig".ocamllsp.setup{
+  capabilities = capabilities,
+  on_attach = on_attach,
+}
+
+require"lspconfig".rust_analyzer.setup{
+  capabilities = capabilities,
+  on_attach = on_attach,
+  cmd = {"rustup", "run", "stable", "rust-analyzer"}
+}
+
+require"lspconfig".lua_ls.setup{
+  capabilities = capabilities,
+  on_attach = on_attach,
+  settings = {
+    Lua = {
+      diagnostics = {
+        globals = {
+          "vim"
+        },
+      },
+      format = {
+        enable = false,
+      },
+    },
+  },
+}
+
+-- Telescope
+require("telescope").setup{}
+require("telescope").load_extension("file_browser")
+require("telescope").load_extension("fzy_native")
+
+local builtin = require("telescope.builtin")
+vim.keymap.set("n", "<space>fd", builtin.find_files, {})
+vim.keymap.set("n", "<space>fg", ":Telescope git_files<CR>", {})
+vim.keymap.set("n", "<space>fe", ":Telescope file_browser<CR>", {})
