@@ -16,9 +16,27 @@
     ./wezterm/wezterm.nix
   ];
 
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+      allowUnfreePredicate = _: true;
+    };
+  };
+
+  xdg.enable = true;
+  xdg.desktopEntries = {
+    wezterm = {
+      name = "Wezterm";
+      exec = "nixGL wezterm";
+      terminal = true;
+    };
+  };
+
   home.packages = with pkgs; [
     # Opinionated nix formatter
     alejandra
+    discord
+    i3
   ];
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -40,7 +58,10 @@
   };
   programs.htop.enable = true;
 
-  fonts.fontconfig.enable = true;
+  xsession.windowManager.i3 = {
+    enable = true;
+  };
+
   systemd.user.startServices = "sd-switch";
   targets.genericLinux.enable = true;
 }

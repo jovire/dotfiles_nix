@@ -8,7 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Required for running westerm in non NixOS
+    # Required for running wezterm in non NixOS
     nixgl = {url = "github:guibou/nixgl";};
   };
 
