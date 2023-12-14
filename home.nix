@@ -14,6 +14,8 @@
   imports = [
     ./neovim/neovim.nix
     ./wezterm/wezterm.nix
+    ./i3.nix
+    ./rofi.nix
   ];
 
   nixpkgs = {
@@ -37,6 +39,8 @@
     alejandra
     discord
     i3
+    i3status-rust
+    rofi
   ];
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -56,11 +60,8 @@
       };
     };
   };
-  programs.htop.enable = true;
-
-  xsession.windowManager.i3 = {
-    enable = true;
-  };
+  programs.btop.enable = true;
+  programs.i3status-rust.enable = true;
 
   systemd.user.startServices = "sd-switch";
   targets.genericLinux.enable = true;
