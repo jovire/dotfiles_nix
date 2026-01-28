@@ -8,23 +8,23 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Required for running wezterm in non NixOS
-    nixgl = {url = "github:guibou/nixgl";};
+    nixGL = {
+      url = "github:nix-community/nixGL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
-    nixgl,
     nixpkgs,
     home-manager,
     ...
-  }: let
+  } @ inputs: let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
   in {
     homeConfigurations."jovire" = home-manager.lib.homeManagerConfiguration {
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [nixgl.overlay];
       };
 
       # Specify your home configuration modules here, for example,
@@ -33,6 +33,9 @@
 
       # Optionally use extraSpecialArgs
       # to pass through arguments to home.nix
+      extraSpecialArgs = {
+        inherit inputs;
+      };
     };
   };
 }

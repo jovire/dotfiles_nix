@@ -74,19 +74,36 @@ require("catppuccin").setup({
   term_colors = true,
   color_overrides = {
     mocha = {
-      text = "#FFFFFF",
-      base = "#000000",
+      -- text = "#FFFFFF",
+      -- base = "#000000",
+      base = "#202020",
+      mantle = "#202020",
+      crust = "#202020",
     },
   },
-  higlight_overrides = {
-    mocha = function(mocha)
+  -- higlight_overrides = {
+    custom_highlights = function(colors)
+      local darkening_percentage = 0.095
+      local U = require('catppuccin.utils.colors')
       return {
-        TabLineSel = { bg = mocha.pink },
-        CmpBorder = { fg = mocha.surface2 },
-        GitSignsChange = { fg = mocha.blue },
+        -- TabLineSel = { bg = colors.pink },
+        -- CmpBorder = { fg = colors.surface2 },
+        -- GitSignsChange = { fg = colors.blue },
+        TelescopeResultsTitle = { bg = colors.green, fg = colors.base },
+        TelescopePromptTitle = { bg = colors.yellow, fg = colors.base },
+        TelescopePreviewTitle = { bg = colors.red, fg = colors.base },
+        TermCursor = { link = 'Cursor' },
+        TermCursorNC = { bg = colors.red, fg = colors.text, ctermbg = 1, ctermfg = 15 },
+        LspCodeLens = { fg = colors.mauve, bg = U.darken(colors.mauve, darkening_percentage, colors.base), italic = true },
+        FidgetTitle = { link = 'DiagnosticHint' },
+        FloatBorder = { fg = colors.base, bg = colors.base },
+        DiagnosticFloatingError = { bg = U.darken(colors.red, darkening_percentage, colors.base) },
+        DiagnosticFloatingWarn = { bg = U.darken(colors.yellow, darkening_percentage, colors.base) },
+        DiagnosticFloatingHint = { bg = U.darken(colors.green, darkening_percentage, colors.base) },
+        DiagnosticFloatingOk = { bg = U.darken(colors.green, darkening_percentage, colors.base) },
       }
     end,
-  },
+  -- },
 })
 vim.cmd.colorscheme("catppuccin")
 
@@ -96,7 +113,9 @@ vim.cmd.colorscheme("catppuccin")
 -- -------
 
 -- LSP
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
+-- local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
 local on_attach = function(client, bufnr)
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -113,36 +132,26 @@ local on_attach = function(client, bufnr)
   vim.cmd.autocmd("BufWritePro <buffer> lua vim.lsp.buf.format()")
 end
 
-require"lspconfig".gopls.setup{
+vim.lsp.config('gopls', {
+  cmd = { 'gopls' },
+  filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
+  root_markers = { 'go.mod', 'go.work', '.git' },
   capabilities = capabilities,
-  on_attach = on_attach,
-  settings = {
-    gopls = {
-      gofumpt = true,
-      completeUnimported = true,
-    }
-  }
-}
+})
 
-require"lspconfig".ocamllsp.setup{
+vim.lsp.config('lua_ls', {
+  cmd = { 'lua-lanaguage-server' },
+  filetypes = { 'lua' },
+  root_markers = { '.luarc.json', '.luarc.jsonc', '.stylua.toml', 'stylua.toml', '.git' },
   capabilities = capabilities,
-  on_attach = on_attach,
-}
-
-require"lspconfig".rust_analyzer.setup{
-  capabilities = capabilities,
-  on_attach = on_attach,
-  cmd = {"rustup", "run", "stable", "rust-analyzer"}
-}
-
-require"lspconfig".lua_ls.setup{
-  capabilities = capabilities,
-  on_attach = on_attach,
   settings = {
     Lua = {
+      completion = {
+        callSnippet = 'Replace',
+      },
       diagnostics = {
         globals = {
-          "vim"
+          'vim'
         },
       },
       format = {
@@ -150,7 +159,9 @@ require"lspconfig".lua_ls.setup{
       },
     },
   },
-}
+})
+
+vim.lsp.config('ocamllsp', {})
 
 -- Telescope
 require("telescope").setup{}
