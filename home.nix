@@ -14,6 +14,7 @@ in {
     };
   };
   imports = [
+    ./ghostty/ghostty.nix
     ./neovim/neovim.nix
     ./i3.nix
   ];
@@ -38,11 +39,6 @@ in {
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  programs.wezterm = {
-    enable = true;
-    package = config.lib.nixGL.wrap pkgs.wezterm;
-  };
-
   # Cannot set default shell through home-manager
   programs.fish.enable = true;
 
@@ -56,11 +52,6 @@ in {
   };
   programs.btop.enable = true;
   programs.i3status-rust.enable = true;
-
-  programs.ghostty = {
-    enable = true;
-    package = config.lib.nixGL.wrap pkgs.ghostty;
-  };
 
   # Nicely reload system unites when changing configs
   systemd.user.startServices = "sd-switch";
