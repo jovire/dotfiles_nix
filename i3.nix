@@ -9,9 +9,12 @@ in {
     enable = true;
     config = {
       modifier = mod;
-      fonts = ["Mongeo"];
+      fonts = {
+        names = ["Monego"];
+      };
       keybindings = lib.mkOptionDefault {
-        "${mod}+Return" = "exec wezterm";
+        "${mod}+Return" = "exec ghostty";
+        "${mod}+d" = "exec rofi -show drun";
       };
     };
   };

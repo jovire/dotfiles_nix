@@ -28,13 +28,22 @@ in {
     };
   };
 
+  fonts.fontconfig.enable = true;
+
   home.packages = with pkgs; [
     alejandra # Opinionated nix formatter
     discord
+    hack-font
+    fd
     i3
     i3status-rust
+    ripgrep
     rofi
   ];
+
+  # disable warnings
+  programs.neovim.withRuby = false;
+  programs.neovim.withPython3 = false;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
